@@ -6,8 +6,10 @@ import {
   Clock3,
   ListTodo,
   LogOut,
+  Plus,
   Users,
 } from "lucide-react";
+import CreateTaskModal from "../../components/dashboard/CreateTaskModal";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -48,6 +50,13 @@ export default function AdminPage() {
     }
   }, [user, router]);
 
+  const [showCreateModal, setShowCreateModal] = useState(false);
+
+  const handleTaskCreated = (newTask: Task) => {
+  setTasks((currentTasks) => [newTask, ...currentTasks]);
+  setShowCreateModal(false);
+  toast.success("Task created successfully");
+};
   // --------------------------------------------------
   // Load tasks and users
   // --------------------------------------------------
@@ -231,23 +240,33 @@ setTasks(
       ============================================ */}
       <div className="mx-auto max-w-7xl px-6 py-8">
         {/* Page title */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3">
-            <Users
-              size={28}
-              className="text-indigo-600"
-            />
+        <div className="mb-8 flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
+  <div>
+    <div className="flex items-center gap-3">
+      <Users
+        size={28}
+        className="text-indigo-600"
+      />
 
-            <h2 className="text-3xl font-bold text-slate-900">
-              Admin Dashboard
-            </h2>
-          </div>
+      <h2 className="text-3xl font-bold text-slate-900">
+        Admin Dashboard
+      </h2>
+    </div>
 
-          <p className="mt-2 text-slate-500">
-            Manage users, tasks, and assignments
-            across the system.
-          </p>
-        </div>
+    <p className="mt-2 text-slate-500">
+      Manage users, tasks, and assignments across the system.
+    </p>
+  </div>
+
+  <button
+    type="button"
+    onClick={() => setShowCreateModal(true)}
+    className="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
+  >
+    <Plus size={18} />
+    Add Task
+  </button>
+</div>
 
         {/* ==========================================
             STATISTICS
@@ -450,6 +469,14 @@ setTasks(
           </div>
         </section>
       </div>
+
+{showCreateModal && (
+  <CreateTaskModal
+    onClose={() => setShowCreateModal(false)}
+    onTaskCreated={handleTaskCreated}
+  />
+)}
+
     </main>
   );
 }
